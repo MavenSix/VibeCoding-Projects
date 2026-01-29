@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Badge } from './ui/badge'
 import { Progress } from './ui/progress'
+import { GanttChart } from './GanttChart'
 import { projectPhases, type Phase, type Artifact } from '@/data/projectData'
 import {
   ChevronRight,
@@ -13,7 +14,9 @@ import {
   AlertCircle,
   Users,
   FileText,
-  ArrowRight
+  ArrowRight,
+  Calendar,
+  List
 } from 'lucide-react'
 
 const statusConfig = {
@@ -261,46 +264,112 @@ function ArtifactCard({ artifact, delay }: { artifact: Artifact; delay: number }
 
 export function RoadmapVisualization() {
   const [expandedPhase, setExpandedPhase] = useState<string | null>('phase-1')
+  const [viewMode, setViewMode] = useState<'gantt' | 'phases'>('gantt')
 
   return (
     <div className="space-y-6">
-      {/* Summary Stats */}
+      {/* View Toggle */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="grid grid-cols-2 md:grid-cols-4 gap-4"
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
       >
-        {[
-          { label: 'Total Phases', value: projectPhases.length, color: 'var(--workday-blue)' },
-          { label: 'In Progress', value: projectPhases.filter(p => p.status === 'in-progress').length, color: 'var(--workday-orange)' },
-          { label: 'Total Artifacts', value: projectPhases.reduce((acc, p) => acc + p.artifacts.length, 0), color: 'var(--workday-teal)' },
-          { label: 'Completed', value: projectPhases.reduce((acc, p) => acc + p.artifacts.filter(a => a.status === 'completed').length, 0), color: 'var(--workday-green)' },
-        ].map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: i * 0.1 }}
-            className="bg-white rounded-lg border border-[var(--workday-gray-200)] p-4 text-center"
+        <div className="flex items-center gap-2 p-1 bg-[var(--workday-gray-100)] rounded-lg">
+          <button
+            onClick={() => setViewMode('gantt')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
+              viewMode === 'gantt'
+                ? 'bg-white text-[var(--workday-blue)] shadow-sm'
+                : 'text-[var(--workday-gray-600)] hover:text-[var(--workday-gray-900)]'
+            }`}
           >
-            <p className="text-3xl font-bold" style={{ color: stat.color }}>{stat.value}</p>
-            <p className="text-sm text-[var(--workday-gray-500)]">{stat.label}</p>
-          </motion.div>
-        ))}
+            <Calendar className="w-4 h-4" />
+            Timeline View
+          </button>
+          <button
+            onClick={() => setViewMode('phases')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
+              viewMode === 'phases'
+                ? 'bg-white text-[var(--workday-blue)] shadow-sm'
+                : 'text-[var(--workday-gray-600)] hover:text-[var(--workday-gray-900)]'
+            }`}
+          >
+            <List className="w-4 h-4" />
+            Phase View
+          </button>
+        </div>
+
+        {/* Summary Stats */}
+        <div className="hidden md:flex items-center gap-4">
+          {[
+            { label: 'Phases', value: projectPhases.length, color: 'var(--workday-blue)' },
+            { label: 'In Progress', value: projectPhases.filter(p => p.status === 'in-progress').length, color: 'var(--workday-orange)' },
+            { label: 'Artifacts', value: projectPhases.reduce((acc, p) => acc + p.artifacts.length, 0), color: 'var(--workday-teal)' },
+          ].map((stat, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <span className="text-2xl font-bold" style={{ color: stat.color }}>{stat.value}</span>
+              <span className="text-xs text-[var(--workday-gray-500)]">{stat.label}</span>
+            </div>
+          ))}
+        </div>
       </motion.div>
 
-      {/* Phase Timeline */}
-      <div className="space-y-4">
-        {projectPhases.map((phase, index) => (
-          <PhaseCard
-            key={phase.id}
-            phase={phase}
-            index={index}
-            isExpanded={expandedPhase === phase.id}
-            onToggle={() => setExpandedPhase(expandedPhase === phase.id ? null : phase.id)}
-          />
-        ))}
-      </div>
+      {/* Content based on view mode */}
+      <AnimatePresence mode="wait">
+        {viewMode === 'gantt' ? (
+          <motion.div
+            key="gantt"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <GanttChart />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="phases"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* Summary Stats for mobile */}
+            <div className="grid grid-cols-2 md:hidden gap-4 mb-6">
+              {[
+                { label: 'Total Phases', value: projectPhases.length, color: 'var(--workday-blue)' },
+                { label: 'In Progress', value: projectPhases.filter(p => p.status === 'in-progress').length, color: 'var(--workday-orange)' },
+                { label: 'Total Artifacts', value: projectPhases.reduce((acc, p) => acc + p.artifacts.length, 0), color: 'var(--workday-teal)' },
+                { label: 'Completed', value: projectPhases.reduce((acc, p) => acc + p.artifacts.filter(a => a.status === 'completed').length, 0), color: 'var(--workday-green)' },
+              ].map((stat, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="bg-white rounded-lg border border-[var(--workday-gray-200)] p-4 text-center"
+                >
+                  <p className="text-3xl font-bold" style={{ color: stat.color }}>{stat.value}</p>
+                  <p className="text-sm text-[var(--workday-gray-500)]">{stat.label}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Phase Timeline */}
+            <div className="space-y-4">
+              {projectPhases.map((phase, index) => (
+                <PhaseCard
+                  key={phase.id}
+                  phase={phase}
+                  index={index}
+                  isExpanded={expandedPhase === phase.id}
+                  onToggle={() => setExpandedPhase(expandedPhase === phase.id ? null : phase.id)}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
