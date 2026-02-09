@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+/* Workday Brand Colors CSS Variables */
+:root {
+  /* Primary Brand Colors */
+  --workday-orange: #f4990b;
+  --workday-orange-dark: #d68709;
+  --workday-orange-light: #fbb544;
+  --workday-blue: #2c69b6;
+  --workday-blue-dark: #1e4a80;
+  --workday-blue-light: #4d8fd4;
+
+  /* Extended Palette */
+  --workday-navy: #0d2240;
+  --workday-teal: #00857c;
+  --workday-green: #4caf50;
+  --workday-red: #e53935;
+  --workday-purple: #6b5b95;
+
+  /* Neutral Colors */
+  --workday-gray-50: #f8fafc;
+  --workday-gray-100: #f1f5f9;
+  --workday-gray-200: #e2e8f0;
+  --workday-gray-300: #cbd5e1;
+  --workday-gray-400: #94a3b8;
+  --workday-gray-500: #64748b;
+  --workday-gray-600: #475569;
+  --workday-gray-700: #334155;
+  --workday-gray-800: #1e293b;
+  --workday-gray-900: #0f172a;
+
+  /* Semantic Colors */
+  --color-background: #ffffff;
+  --color-foreground: var(--workday-gray-900);
+  --color-card: #ffffff;
+  --color-card-foreground: var(--workday-gray-900);
+  --color-popover: #ffffff;
+  --color-popover-foreground: var(--workday-gray-900);
+  --color-primary: var(--workday-blue);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--workday-gray-100);
+  --color-secondary-foreground: var(--workday-gray-900);
+  --color-muted: var(--workday-gray-100);
+  --color-muted-foreground: var(--workday-gray-500);
+  --color-accent: var(--workday-orange);
+  --color-accent-foreground: #ffffff;
+  --color-destructive: var(--workday-red);
+  --color-destructive-foreground: #ffffff;
+  --color-border: var(--workday-gray-200);
+  --color-input: var(--workday-gray-200);
+  --color-ring: var(--workday-blue);
+
+  /* Border Radius */
+  --radius: 0.5rem;
+}
+
+/* Base Styles */
+* {
+  border-color: var(--color-border);
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  min-height: 100vh;
+}
+
+/* Workday Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--workday-gray-100);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--workday-gray-300);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--workday-gray-400);
+}
